@@ -56,7 +56,10 @@ namespace ListUpUsingMaterial.Classes
         /// <param name="value">値</param>
         public void SetValue(string key, string value) 
         {
-            values.Add(key, value);
+            if (!values.ContainsKey(key)) 
+            {
+                values.Add(key, value);
+            }
         }
 
         /// <summary>

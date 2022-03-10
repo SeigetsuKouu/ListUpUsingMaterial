@@ -24,28 +24,36 @@ namespace ListUpUsingMaterial.Windows.ListingUsingMaterialWindow
 
                 if (model.AviUtlObjects != null) 
                 {
-                    string[] ncIDs = null;
+                    string[] ids = null;
 
                     // ニコニ・コモンズの素材IDと思われる物を取得
-                    if (
-                        model.AviUtlObjects != null &&
-                        model.AviUtlObjects.Any(n => Regex.IsMatch(n.File.Name, "^.*(nc[0-9]+).*$"))) 
+                    if (model.AviUtlObjects != null)
                     {
-                        ncIDs =
+                        // ニコニ・コモンズのID持ち
+                        var ncIDs =
                             model.AviUtlObjects
                                 ?.Where(n => Regex.IsMatch(n.File.Name, "^.*(nc[0-9]+).*$"))
                                 .Select(n => Regex.Matches(n.File.Name.Split(".").First(), "nc[0-9]+").First().Value)
-                                .Distinct()
-                                .ToArray();
+                                .Distinct();
+
+                        // ニコニコ静画のID持ち
+                        var imIDs =
+                            model.AviUtlObjects
+                                ?.Where(n => Regex.IsMatch(n.File.Name, "^.*(im[0-9]+).*$"))
+                                .Select(n => Regex.Matches(n.File.Name.Split(".").First(), "im[0-9]+").First().Value)
+                                .Distinct();
+
+                        ids = ncIDs.Union(imIDs).ToArray();
+
                     }
 
                     // 10個ずつ表示する
                     string text = string.Empty;
-                    if (ncIDs != null) 
+                    if (ids != null) 
                     {
-                        for (int i = 0; i < Math.Ceiling(ncIDs.Length / 10.0); i++)
+                        for (int i = 0; i < Math.Ceiling(ids.Length / 10.0); i++)
                         {
-                            text += string.Join(" ", ncIDs.Skip(i * 10).Take(10));
+                            text += string.Join(" ", ids.Skip(i * 10).Take(10));
                             text += "\n";
                         }
                     }
